@@ -117,7 +117,7 @@ You should get something like this:
 
 ```
 Traceback (most recent call last):
-  File "/Users/evelyn/Practicals/failing_loudly/vcf_validator.py", line 67, in <module>
+  File "/Users/evelyn/Practicals/failing_loudly/vcf_validator.py", line 72, in <module>
     main(args.input_vcf)
     ~~~~^^^^^^^^^^^^^^^^
   File "/Users/evelyn/Practicals/failing_loudly/vcf_validator.py", line 11, in main
@@ -127,7 +127,7 @@ Exception: Unknown Error
 
 Oops! There is an error! No worries, let's stare at it. Luckily for us, this is quite a straightforward error message and traceback. You can see here right at the bottom is our error: 'Exception: Unknown Error'. Wow, this is not a helpful error message at all! Who wrote this? We can definitely do better. 
 
-Working our way bottom to top through the traceback, you can see the script that has broken is the one we are running, "vcf_validator.py", at line 11. Going further up, the message then tells us the function the error occured in, function main(), which is called at line 67. 
+Working our way bottom to top through the traceback, you can see the script that has broken is the one we are running, "vcf_validator.py", at line 11. Going further up, the message then tells us the function the error occured in, function main(), which is called at line 72. 
 
 Now that we've pinpointed our error, let's open the script and look at lines 9-11:
 
@@ -154,7 +154,7 @@ Now your error message should say this:
 
 ```
 Traceback (most recent call last):
-  File "/Users/evelyn/Practicals/failing_loudly/vcf_validator.py", line 67, in <module>
+  File "/Users/evelyn/Practicals/failing_loudly/vcf_validator.py", line 72, in <module>
     main(args.input_vcf)
     ~~~~^^^^^^^^^^^^^^^^
   File "/Users/evelyn/Practicals/failing_loudly/vcf_validator.py", line 11, in main
@@ -175,7 +175,7 @@ Patient_C.vcf
 Patient_D.vcf
 ```
 
-Ah, it looks like I did not spell the vcf correctly - it's patient_1_dod*g*y.vcf, not patient_1_dody.vcf. Let's run it again with the right name:
+Ah, it looks like I did not spell the vcf correctly - it's patient_1_dod*g*y.vcfs, not patient_1_dody.vcfs. Let's run it again with the right name:
 
 ```bash
 python3 ./0_scripts/vcf_validator.py --input_vcf 1_vcfs/patient_1_dodgy.vcfs
@@ -187,7 +187,7 @@ Let's go ahead and tackle this new error:
 
 ```
 Traceback (most recent call last):
-  File "/Users/evelyn/failing_loudly/Practicals/./vcf_validator.py", line 67, in <module>
+  File "/Users/evelyn/failing_loudly/Practicals/./vcf_validator.py", line 72, in <module>
     main(args.input_vcf)
     ~~~~^^^^^^^^^^^^^^^^
   File "/Users/evelyn/failing_loudly/Practicals/failing_loudly/./vcf_validator.py", line 19, in main
@@ -203,7 +203,7 @@ Again, another unhelpful error message. Working our way from the bottom, the err
  
 <details>
 <summary>Answers</summary>
-<ul><li>1. Line 67, as can be seen near the top of the traceback</li>
+<ul><li>1. Line 72, as can be seen near the top of the traceback</li>
 <li>2. The error message would likely get longer because script#2 would also throw an error, which would be added to the overall traceback </li> </ul>
 </details>
 
@@ -230,7 +230,7 @@ python3 ./0_scripts/vcf_validator.py --input_vcf 1_vcfs/patient_1_dodgy.vcfs
 ```
 ```
 Traceback (most recent call last):
-  File "/Users/evelyn/failing_loudly/Practicals/./vcf_validator.py", line 67, in <module>
+  File "/Users/evelyn/failing_loudly/Practicals/./vcf_validator.py", line 72, in <module>
     main(args.input_vcf)
     ~~~~^^^^^^^^^^^^^^^^
   File "/Users/evelyn/failing_loudly/Practicals/failing_loudly/./vcf_validator.py", line 19, in main
@@ -247,10 +247,10 @@ Woo-hoo! Now onwards to the next error!
 
 ```
 Traceback (most recent call last):
-  File "/Users/evelyn/failing_loudly/Practicals/failing_loudly/./vcf_validator.py", line 79, in <module>
+  File "/Users/evelyn/failing_loudly/Practicals/failing_loudly/./vcf_validator.py", line 72, in <module>
     main(args.input_vcf)
     ~~~~^^^^^^^^^^^^^^^^
-  File "/Users/evelyn/failing_loudly/Practicals/failing_loudly/./vcf_validator.py", line 69, in main
+  File "/Users/evelyn/failing_loudly/Practicals/failing_loudly/./vcf_validator.py", line 60, in main
     raise Exception("Cannot have data lines preceding header")
 ```
 Ah, this is now interesting. If you look at the bottom of the traceback again, you can see the  "exception" causing the new problem. It seems our vcf may have some formatting issues.
@@ -362,7 +362,7 @@ Now the order of both the header and the columns of the data section should be s
 
 <details>
 <summary>Answer</summary>
-<ul><li>1. We need to swap the entire column of the data section, not just the header column names. Otherwise, the wrong column will be named incorrectly! Please note also this example is only for teaching purposes. If you ever came across a vcf this messed up, you would to take a break, make a huge cup of coffee, and make a new vcf fresh from the start.</li> </ul>
+<ul><li>1. We need to swap the entire column of the data section, not just the header column names. Otherwise, the wrong column will be named incorrectly! Please note also this example is only for teaching purposes. If you ever came across a vcf this messed up, you would need to take a break, make a huge cup of coffee, and make a new vcf fresh from the start.</li> </ul>
 </details>
 
 

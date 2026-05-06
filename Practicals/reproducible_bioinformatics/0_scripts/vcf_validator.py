@@ -29,7 +29,6 @@ def main(input_vcf):
     with open(vcf_file, "r") as f:
         for line in f:
             line = line.rstrip("\n")
-            print(line)
         # Metadata lines
             if line.startswith("##"):
                 if main_vcf_header:
