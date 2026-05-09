@@ -22,6 +22,24 @@ Delivered in Semester 1
 
 ## Module 2: Pathogens and Metagenomics
 
+**Introduction to Pathogen Genomics**
+
+- Practical 1 - [Introduction to Pathogen Genomics](Practicals/pathogens_and_metagenomics/intro_pathogens.md)
+
+**Bacterial Genome Assembly**
+
+- Practical 2 - [Short-read Genome Assembly](Practicals/pathogens_and_metagenomics/assembly_short_read.md)
+- Practical 3 - [Long-read Genome Assembly](Practicals/pathogens_and_metagenomics/assembly_long_read.md)
+- Practical 4 - [Genome Assembly Quality Control](Practicals/pathogens_and_metagenomics/assembly_qc.md)
+
+**Command Line BLAST**
+
+- Practical 5 - [Introduction to BLAST](Practicals/pathogens_and_metagenomics/blast_intro.md)
+- Practical 6 - [BLAST Applications](Practicals/pathogens_and_metagenomics/blast_applications.md)
+
+**Metagenomics**
+
+- Practical 7 - [Metagenomics](Practicals/pathogens_and_metagenomics/metagenomics.md)
 
 ## Module 3: Reproducible Bioinformatics
 **Failing Loudly**
