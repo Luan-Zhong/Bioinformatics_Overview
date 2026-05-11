@@ -64,8 +64,9 @@ copy scripts and data and also make symlinks
 ```bash
 cp ~/data/failing_loudly/0_scripts/* 0_scripts/
 ln -s ~/data/failing_loudly/1_vcfs/*.vcf 1_vcfs/
-ln -s ~/data/failing_loudly/1_vcfs/*.vcf.gz 1_vcfs/*.vcf.gz
-ln -s ~/data/failing_loudly/2_bam/*.bam 2_bam/
+ln -s ~/data/failing_loudly/1_vcfs/*.vcf.gz* 1_vcfs/
+ln -s ~/data/failing_loudly/1_vcfs/counterpart_vcfs/*.vcf.gz* 1_vcfs/counterpart_vcfs/
+ln -s ~/data/failing_loudly/2_bam/*.bam* 2_bam/
 ln -s ~/data/failing_loudly/4_refs/Homo_sapiens_assembly38.fasta 4_refs/Homo_sapiens_assembly38.fasta
 ln -s ~/data/failing_loudly/4_refs/HaplotypeMap.vcf 4_refs/HaplotypeMap.vcf
 ln -s ~/data/failing_loudly/4_refs/DPYD_variants_genome_location.csv 4_refs/DPYD_variants_genome_location
@@ -119,9 +120,7 @@ ls 4_refs/HaplotypeMap.vcf
 ls 4_refs/Homo_sapiens_assembly38.fasta
 ```
 
-4_refs/HaplotypeMap.vcf is provided by the argument --HAPLOTYPE_MAP, while 4_refs/Homo_sapiens_assembly38.fasta is provided to the tool by the argument -R.
-
-Now let's run the fingerprint command:
+In the fingerprint checking command below, 4_refs/HaplotypeMap.vcf is provided by the argument --HAPLOTYPE_MAP, while 4_refs/Homo_sapiens_assembly38.fasta is provided to the tool by the argument -R. Let's run it:
 
 ```bash
 gatk CheckFingerprint -R 4_refs/Homo_sapiens_assembly38.fasta -I 1_vcfs/Patient_A.vcf.gz --GENOTYPES 1_vcfs/counterpart_vcfs/Patient_A_counterpart.gatk.hg38.vcf.gz --HAPLOTYPE_MAP --GENOTYPE_LOD_THRESHOLD 0 --SUMMARY_OUTPUT 3_reports/Patient_A.fingerprint_summary.tsv --DETAIL_OUTPUT 3_reports/Patient_A.fingerprint_detailMetrics.tsv
@@ -228,7 +227,7 @@ Let's run a for loop on the other patients, and store the outputs:
 
 ```bash
 for vcf in 1_vcfs/counterpart_vcfs/Patient_*_counterpart.gatk.hg38.vcf.gz; \
-do a=$(basename $vcf .gatk.hg38.vcf.gz); ./0_scripts/check_vaf.py $vcf 2>&1 | tee 3_reports/2_contam_check/${a}_contam_check; done
+do a=$(basename $vcf .gatk.hg38.vcf.gz); python ./0_scripts/check_vaf.py $vcf 2>&1 | tee 3_reports/2_contam_check/${a}_contam_check; done
 
 ```
 This script classifies sample contamination status as "OK" if the number of low vaf SNPs is < 3. 
@@ -238,7 +237,7 @@ This script classifies sample contamination status as "OK" if the number of low 
 
 <details>
 <summary>Answer</summary>
-<ul><li>1. No, again all of them except for again Patient E. Perhaps something is up with that sample! </li>
+<ul><li>1. No, again all of them except for again Patient E, which has 8 variants with low vaf. Perhaps something is up with that sample! </li>
  </ul>
 </details>
 
@@ -317,6 +316,12 @@ for i in ./2_bam/*.bam; do a=$(basename $i .bam); bcftools mpileup --count-orpha
 | bcftools +fill-tags -O v -o 3_reports/3_varcall_check/${a}_bcftools_check.vcf -- -t FORMAT/VAF; done
 ```
 
+You can list the new vcfs you've just variant called. Hopefully, they accord with Vardict's calls, which we'll find out in the next section:
+
+```bash
+ll 3_reports/3_varcall_check/*_bcftools_check.vcf
+```
+
 ## **4. Running the full pipeline**
 
 ### 4.1 Outputting QC reports to summarise pass/fail
@@ -350,19 +355,18 @@ bash ./DPYD_mini_pipeline.sh ../1_vcfs/patient_1_dody.vcfs
 cd ..
 ```
 
-Wow, that is a lot of errors in the output. It's a bit harder to find the issue now!
+Wow, that is a lot of errors in the output. It's a bit harder to find the issue now, as there are tracebacks stacked on top of each other! But if you comb through it, eventually you should find our 'Unknown Error' in the vcf validator script from last week, signalling the input is missing.
 
 
+### Bonus task if time permitting 
 
-### Bonus tasks if time permitting 
-
-1. Take a look at our bash pipeline, "DPYD_mini_pipeline.sh", with nano. Have a look at the top where "set -e" is commented. Can you comment it out and see what happens?
+1. Take a look at our bash pipeline, "DPYD_mini_pipeline.sh", with nano. Have a look near the very top where "set -e" is commented.
 
 ```bash
 nano 0_scripts/DPYD_mini_pipeline.sh
 ```
 
-Uncomment the set -e line so it looks like below. This will makes the pipeline immediate exit once it hits an error: 
+Uncomment the set -e on line 4 so it looks like below. This will makes the pipeline immediate exit once it hits an error: 
 
 ```
 #!/bin/bash
@@ -370,17 +374,14 @@ Uncomment the set -e line so it looks like below. This will makes the pipeline i
 # Exit on error
 set -e
 ```
+Run the command again:
 
 ```bash
+cd 0_scripts
 bash ./DPYD_mini_pipeline.sh ../1_vcfs/patient_1_dody.vcfs
+cd ..
 ```
-
-
-2. Take another look at our bash pipeline, "DPYD_mini_pipeline.sh". In that bash script, are the paths to the python and awk scripts absolute or relative? Could this cause issues? Can you change one of the the paths to be absolute instead? (hint: to get the path of a script or file, you could run):
-
-```bash
- ls -d "$PWD"/{script_or_file_name} )
-```
+Would you say that is a bit cleaner output to troubleshoot? We have just made the pipeline exit as soon as it encounters an issue, rather than trying to force on. 
 
 
 **Bonus questions about DPYD metabolism:**
@@ -400,7 +401,6 @@ Depending on the configuration of alleles, and whether those alleles have zero, 
 <li>2. Probably a minimum dosage or an alternative therapy </li> 
 <li>3. Basically, there are two SNPs in linkage disequilibirum, the tag SNP and the causal SNP. In rare cases, the linkage between them could break an therefore you have a tag SNP without the causal SNP, and vice versa.  </li> </ul>
 </details>
-
 
 
 ## Concluding remarks
