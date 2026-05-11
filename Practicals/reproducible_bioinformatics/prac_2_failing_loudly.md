@@ -10,7 +10,7 @@
 
 In last week's practical, we started to get the hang of handling failing scripts and the concept that failure, in general, isn't a bad thing! Here we are going to focus on how we can best handle errors in diagnostic reporting. 
 
-The DPYD gene is responsible for generating the dihydropyrimidine dehydrogenase (DPD) enzyme, which plays a key role in the metabolism of toxic compounds. Deficiency in this enzyme can cause fatal toxicity to fluoropyrimidine chemotherapy treatments (e.g., 5-fluorouracil, capecitabine), which are widely used in the treatment of solid tumours such as colorectal cancer, breast cancer and gastrointestinal cancers. Variants in the DPYD can cause different functionality in the DPD enzyme's function, categorised into zero, decreased, or normal function. 
+The DPYD gene is responsible for generating the dihydropyrimidine dehydrogenase (DPD) enzyme, which plays a key role in the metabolism of toxic compounds. Deficiency in this enzyme can cause fatal toxicity to fluoropyrimidine chemotherapy treatments (e.g., 5-fluorouracil, capecitabine), which are widely used in the treatment of solid tumour cancers. Variants in the DPYD can impair functionality in the DPD enzyme's function, categorised into zero, decreased, or normal function. 
 
 It's important to optimise the variant-tailored dosage, as the standard dose that is effective for some people can be fatal for certain variant carriers. Severe toxicity to these drugs occurs in about 10% to 40% of patients, and around 7% of Europeans carry some variant that impairs function. In South Australia, there has unfortunately been a recorded case of patient fatality due to DPD enzyme deficiency and an incorrectly tailored dosage. 
 
@@ -19,13 +19,6 @@ It's important to optimise the variant-tailored dosage, as the standard dose tha
 
 Figure 1. The relative risk of toxicity in those with versus without the
 specified variant when treated with full or individualised dose (taken from [Sonic Genetics](https://www.sonicgenetics.com.au/))
- 
- 
-Depending on the configuration of alleles, and whether those alleles have zero, decreased or normal function, patients will receive a metabolism rating. Have a look at how the rating is worked out in this [DPYD metabolism rating table](images_and_refs/DPYD_metabolism_rating_and_recommendations.xlsx)
-
-
-Today, we are going to determine whether four cancer patients are carrying particular variants in a DPYD gene, and what phenotype and metabolism rating can be deduced from their allele types. It's absolutely critical we get this diagnostically right in the end, as the oncologist will use this information to determine the best course of treatment that can aggressively handle the cancer, whilst minimising the effect on the patient as much as possible. 
-The patient is waiting on this information - so not only we have to get it right, we want do it quickly. Last week we made sure our errors were noisy in our scripting; this week we are going to make our pipeline noisy about the whole process. 
 
 ### 1.1 Reminder about virtual Machines
 
@@ -37,50 +30,45 @@ As usual we will be connecting the virtual machines:
 
 1. Understand clinical failure in a clinical bioinformatics and how to minimise it
 2. Learn troubleshooting errors from bioinformatic tools
-3. Learn why QC at every crucial step is important to ensure errors are mitigated
-4. Learn about how clinical screening results are curated and reported out 
-5. Learn about variant reporting in the DPYD gene
+3. Learn about how clinical screening results are curated and reported out 
+4. Learn about variant reporting in the DPYD gene
 
 ## 1.3 About the dataset
 
 Today we are looking at four patients, who I have anonymised to Patient A, Patient B, Patient C and Patient D. There is a bonus Patient E who has not been reported out, and you will soon find out why. 
 
 Patients A,B,C and D have had real diagnostic reports issued out for them, and you can have a look at the anonymised versions here. [DPYD patient reports](images_and_refs/Patient_reports.docx)
-
-**Questions:**
-1.  Referring to the DPYD metabolism table, what score would be given to patient who has 1 normal funtion allele and 1 decreased function? Would you classify their phenotype as normal, intermediate or poor?
-2. Referring to the DYPD patient reports, which patient actually has 2 decreased function alleles that are both classified as poor metabolisers? If you had to guess, what dosage would likely be given to this patient?
- 
-<details>
-<summary>Answers</summary>
-<ul><li>1. Intermediate metaboliser </li>
-<ul><li>2. Probably a minimum dosage or an alternative therapy </li> </ul>
-</details>
-
+If you have time at the end of the prac or in your spare time, I have put some bonus questions regarding these reports. 
 
 ## **2. Errors with sample integrity**
 
 ### 2.1 Getting scripts and data ready
+
+Let's load up our data and scripts!
 
 load software
 ```bash
 source activate bioinf
 ```
 
-create all directories (will do nothing if they already exist) and move into project directory
+create all directories and move into project directory
 ```bash
-mkdir -p ~/Practical_Failing_Loudly/{0_scripts,1_vcfs,2_bam,3_reports,4_refs}
-mkdir -p ~/Practical_Failing_Loudly/3_reports/{1_fingerprint_check,2_contam_check,3_varcall_check}
-cd ~/Practical_Failing_Loudly
+mkdir -p ~/Practical_Failing_Loudly2/{0_scripts,1_vcfs,2_bam,3_reports,4_refs}
+mkdir -p ~/Practical_Failing_Loudly2/1_vcfs/counterpart_vcfs
+mkdir -p ~/Practical_Failing_Loudly2/3_reports/{1_fingerprint_check,2_contam_check,3_varcall_check}
+cd ~/Practical_Failing_Loudly2
 ```
 
-copy scripts and data and also make symlinks, if not existing from last week's prac
+copy scripts and data and also make symlinks
 
 ```bash
-[ -f /dest/file ] || cp ~/data/failing_loudly/0_scripts/* 0_scripts/
-[ -e /path/to/link ] || ln -s ~/data/failing_loudly/1_vcfs/*.vcf 1_vcfs/
-[ -e /path/to/link ] || ln -s ~/data/failing_loudly/2_bam/*.bam 2_bam/
-[ -e /path/to/link ] || ln -s ~/data/failing_loudly/4_refs/* 4_refs/
+cp ~/data/failing_loudly/0_scripts/* 0_scripts/
+ln -s ~/data/failing_loudly/1_vcfs/*.vcf 1_vcfs/
+ln -s ~/data/failing_loudly/1_vcfs/*.vcf.gz 1_vcfs/*.vcf.gz
+ln -s ~/data/failing_loudly/2_bam/*.bam 2_bam/
+ln -s ~/data/failing_loudly/4_refs/Homo_sapiens_assembly38.fasta 4_refs/Homo_sapiens_assembly38.fasta
+ln -s ~/data/failing_loudly/4_refs/HaplotypeMap.vcf 4_refs/HaplotypeMap.vcf
+ln -s ~/data/failing_loudly/4_refs/DPYD_variants_genome_location.csv 4_refs/DPYD_variants_genome_location
 ```
 
 copy new scripts and data for this week's prac
@@ -91,9 +79,9 @@ ln -s ~/data/failing_loudly/1_vcfs/*.vcf 1_vcfs/
 
 ### 2.2 Checking a sample's integrity with genetic fingerprinting
 
-The throughput of NGS samples going through clinical laboratories is really high, and getting higher every year. Some labs are seeing more than 20,000 NGS samples processed each year. This is pushing a lot of automation both in lab and in silico, but even now some lab steps are manual. With so many samples being manually handled at certain steps, how can we guarantee that no sample has been swapped or contaminated with another? 
+The throughput of NGS samples going through clinical laboratories is really high, and getting higher every year. Some labs are seeing more than 20,000 NGS samples processed each year. With so many samples being manually handled at certain steps, how can we guarantee that no sample has been swapped or contaminated with another? 
 
-One way is to separate the sample into two, right at the beginning when the lab first receives the sample. The first part of the sample goes through the normal testing process, and we generate data for it. The second part goes through a completely independent workflow, where we target just a handful of common SNPs.
+One way is to separate the sample into two, right at the beginning when the lab first receives the sample. The first part of the sample goes through the normal testing process, and we generate data for it. The counterpart goes through a completely independent workflow, where we target just a handful of common SNPs.
 
 
 ```mermaid
@@ -117,6 +105,8 @@ flowchart TD
 This is just one of many sanity checks we can do, including pedigree check relatedness between family members, population ancestry, etc.
 
 Let's start by running a fingerprint check for Patient A. The counterpart vcfs are in a separate folder, as you can see here, and have been produced completely indepedently from our diagnostic vcfs (so they won't have any variants in the DPYD gene). They contain mostly germline SNPs, that occur with faily high frequency (> 5%) in the most common population databases.
+
+Here are the counterpart vcfs:
 
 ```bash
 ls 1_vcfs/counterpart_vcfs/
@@ -151,7 +141,7 @@ Tool returned:
 1
 ```
 
-Aha! An error! Lucky for us, we eat errors for breakfast. Notice, the GATK tool hasn't even said it's thrown an error - it's just listed all the required arguments (to nudge you to use the right ones) and told us at the bottom that we are doing something illegal. It's also told us the exit code is 1, which is developer speak for something is not right.
+Aha! An error! Lucky for us, we eat errors for breakfast. Notice, the GATK tool hasn't even said it's thrown an error - it's just listed all the required arguments (to nudge you to use the right ones) and told us at the bottom that we are doing something illegal. It's also told us the exit code is 1, which is "developer speak" for something is not right.
 
 'Illegal argument value' tells us something might be wrong with our arguments or inputs. Can you figure out the issue now that you've had some experience digging into errors? Have a careful look at the inputs and give it a go. If you truly get stuck, the right command to run is hidden below. 
 
@@ -220,9 +210,9 @@ Patient_E -216.23926626114772 </li>
 
 ### 3.1 Checking for any evidence of contamination
 
-Now that we have verified that all the samples are correctly identified and that no swaps have occured, another thing we can check is whether there is any evidence of contamination, especially low-level contamination that could influence heterozygous calls. Remember that germline SNPs should usually only ever sit around 1 or 0.5 in frequency, for homozygous and heterozygous SNPs respectively? Well, if you see variants with any VAFs different to this, it could be because 1) it's a somatic variant that has accumulated over the patient's lifespan and not present in all cells, 2) there are reads from other patients contaminating the sample and making up the other portion of the allel fraction.
+Now that we have verified that all the samples are correctly identified and that no swaps have occured, another thing we can check is whether there is any evidence of low-level contamination. Remember that germline SNPs should usually only ever sit around 1 or 0.5 in frequency, for homozygous and heterozygous SNPs respectively? Well, if you see variants with any VAFs different to this, it could be because there are reads from other patients contaminating the sample and making up the other portion of the allel fraction.
 
-Since our counterpart vcfs mostly have SNPs that are common in population databases, they're more likely to be germline than somatic, so if we see widespread homozygous alt variants at these positions, it's more likele case 2). We can check this, by counting up the number of SNPs in the counterpart vcf that have a vaf less than 0.9, at homozygous alt positions.
+We can check for this, by counting up the number of SNPs in the counterpart vcf that have a vaf less than 0.9, at homozygous alt positions.
 
 ```bash
 python ./0_scripts/check_vaf.py 1_vcfs/counterpart_vcfs/Patient_A_counterpart.gatk.hg38.vcf.gz
@@ -251,10 +241,9 @@ This script classifies sample contamination status as "OK" if the number of low 
 
 <details>
 <summary>Answer</summary>
-<ul><li>1. Yes! </li>
+<ul><li>1. No, again all of them except for again Patient E. Perhaps something is up with that sample! </li>
  </ul>
 </details>
-
 
 
 ## **3. Errors with variant calling**
@@ -289,8 +278,8 @@ bcftools mpileup --count-orphans --no-BAQ \
 | bcftools +fill-tags -O v -o 3_reports/3_varcall_check/Patient_A_bcftools_check.vcf -- -t FORMAT/VAF
 ```
 
-Well well, do I smell another input error? Have a look at the error message from bcftools. 
-Do you think you can work it out and fix the typo in the above command? 
+Well well well, do I smell another input error? Have a look at the error message from bcftools. 
+Do you think you can work it out and fix the typo in the above command? If you get stuck, use the command hidden below.
 
 
 <details>
@@ -329,43 +318,92 @@ for i in ./2_bam/*.bam; do a=$(basename $i .bam); bcftools mpileup --count-orpha
 | bcftools +fill-tags -O v -o 3_reports/3_varcall_check/${a}_bcftools_check.vcf -- -t FORMAT/VAF; done
 ```
 
-## **4. Outputting QC reports to summarise pass/fail**
+## **4. Running the full pipeline**
 
-Well done for making it this far! That was quite a lot, and it gets very tedious to check each sample one by one. Let's finally run our nice pipeline, which will do all this hard work for us and give us a nice summary file, with pass/fail info for the steps that matter. 
+### 4.1 Outputting QC reports to summarise pass/fail
 
+Well done for making it this far! That was quite a lot, and it gets very tedious to check each sample one by one. Let's finally run our smooth pipeline, which will do all this hard work for us and give us a nice summary file, with pass/fail info for the steps that matter. 
 
 
 ```bash
-
+cd 0_scripts
+bash ./DPYD_mini_pipeline.sh ../1_vcfs/Patient_A.vcf ../1_vcfs/Patient_B.vcf ../1_vcfs/Patient_C.vcf ../1_vcfs/Patient_D.vcf ../1_vcfs/Patient_E.vcf 
+cd ..
 ```
 
+The output should be an excel file with some crisp formatting. You can see that we've coloured some of the cells green/red based on if they pass/fail some QC thresholds:
 
 
+FILTER - must be "pass"
+AF (allele frequecy) - must be 0.35 <= af <= 0.65 or af >= 0.9
+DP - must be > 300 
+variant call second-check - variant must be called by our second caller, bcftools
+contamination check - counterpart vcf must have no more than 3 low-vaf SNPs
+fingerprint check - must be positive
 
-## **5. What does it look like when things go wrong?**
+### 4.2 Outputting QC reports to summarise pass/fail
 
-
-Remember last week when we actively broke some python scripts? You may remember the error message from the validator script was relatively straightforward. What will happen if we run a dodgy vcf through our mini pipeline script? Let's give it a try. 
+Remember last week when we actively broke some python scripts? You may remember the error message from the validator script was relatively straightforward. What will happen if we run a non-existant vcf through the pipeline?
 
 ```bash
-cp ~/data/failing_loudly/patient_1_dodgy.vcfs ./1_vcfs/patient_1_dodgy.vcf
+cd 0_scripts
+bash ./DPYD_mini_pipeline.sh ../1_vcfs/patient_1_dody.vcfs
+cd ..
 ```
 
-
-
+Wow, that is a lot of errors in the output. It's a bit harder to find the issue now!
 
 
 
 ### Bonus tasks if time permitting 
-1. Take a look at our bash script. "DPYD_mini_pipeline.sh". In that bash scripts, are the paths to the python and awk scripts absolute or relative? Could this cause issues? Can you change the path to be absolute instead? (hint: to get the path of a script or file, you could run):
+
+1. Take a look at our bash pipeline, "DPYD_mini_pipeline.sh", with nano. Have a look at the top where "set -e" is commented. Can you comment it out and see what happens?
+
+```bash
+nano 0_scripts/DPYD_mini_pipeline.sh
+```
+
+Uncomment the set -e line so it looks like below. This will makes the pipeline immediate exit once it hits an error: 
+
+```
+#!/bin/bash
+
+# Exit on error
+set -e
+```
+
+```bash
+bash ./DPYD_mini_pipeline.sh ../1_vcfs/patient_1_dody.vcfs
+```
+
+
+2. Take another look at our bash pipeline, "DPYD_mini_pipeline.sh". In that bash script, are the paths to the python and awk scripts absolute or relative? Could this cause issues? Can you change one of the the paths to be absolute instead? (hint: to get the path of a script or file, you could run):
 
 ```bash
  ls -d "$PWD"/{script_or_file_name} )
 ```
 
-2. In the reports, the following caveat is given: "For the HapB3 genotype “decreased function” is inferred by detecting the exonic tag SNP (c.1236G>A). Recent studies indicate that in rare cases, the causal decreased function variant c.1129-5923C>G may not be present despite having this tag SNP". What mechanism could cause the causal variant not be present in a patient, when the tag SNP itself is?
+
+**Bonus questions about DPYD metabolism:**
+
+Depending on the configuration of alleles, and whether those alleles have zero, decreased or normal function, patients will receive a metabolism rating. If you are interested, have a look at how the rating is worked out in this [DPYD metabolism rating table](images_and_refs/DPYD_metabolism_rating_and_recommendations.xlsx)
+
+[DPYD patient reports](images_and_refs/Patient_reports.docx)
+
+
+1.  Referring to the DPYD metabolism table, what score would be given to patient who has 1 normal funtion allele and 1 decreased function? Would you classify their phenotype as normal, intermediate or poor?
+2. Referring to the DYPD patient reports, which patient actually has 2 decreased function alleles that are both classified as poor metabolisers? If you had to guess, what dosage would likely be given to this patient?
+3. Hard question - in the reports, the following caveat is given: "For the HapB3 genotype “decreased function” is inferred by detecting the exonic tag SNP (c.1236G>A). Recent studies indicate that in rare cases, the causal decreased function variant c.1129-5923C>G may not be present despite having this tag SNP". What mechanism could cause the causal variant not be present in a patient, when the tag SNP itself is?
+ 
+<details>
+<summary>Answers</summary>
+<ul><li>1. Intermediate metaboliser </li>
+<ul><li>2. Probably a minimum dosage or an alternative therapy </li> </ul>
+<ul><li>3. Basically, there are two SNPs in linkage disequilibirum, the tag SNP and the causal SNP. In rare cases, the linkage between them could break an therefore you have a tag SNP without the causal SNP, and vice versa.  </li> </ul>
+</details>
+
 
 
 ## Concluding remarks
 
-Hopefully through doing this prac, you will see that even when the stakes for not failing are high, by being loud about everything that could go wrong in as many key places we could, we can assure our clinicians and our patients that everything that the reports have been painstakingly checked and are accurate to the best of our ability. Perhaps the old adage is true, and failing loud really is the key to success! 
+Hopefully through doing this prac, you will see that even when the stakes for not failing are high, being loud about errors is truly the way to go. Perhaps the old adage is true, and failing really is the key to success! 
