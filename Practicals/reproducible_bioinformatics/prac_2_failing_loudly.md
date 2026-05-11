@@ -104,14 +104,14 @@ Let's start by running a fingerprint check for Patient A. The counterpart vcfs a
 Here are the counterpart vcfs:
 
 ```bash
-ls 1_vcfs/counterpart_vcfs/
+ls 1_vcfs/counterpart_vcfs/*.gz
 ```
 ```
-Patient_A_counterpart.gatk.hg38.vcf	
-Patient_B_counterpart.gatk.hg38.vcf
-Patient_C_counterpart.gatk.hg38.vcf	
-Patient_D_counterpart.gatk.hg38.vcf
-Patient_E_counterpart.gatk.hg38.vcf
+Patient_A_counterpart.gatk.hg38.vcf.gz
+Patient_B_counterpart.gatk.hg38.vcf.gz
+Patient_C_counterpart.gatk.hg38.vcf	.gz
+Patient_D_counterpart.gatk.hg38.vcf.gz
+Patient_E_counterpart.gatk.hg38.vcf.gz
 ```
 
 We're going to check the concordance of genotypes using GATK. We need two input ref files for the fingerprint command: 
@@ -369,7 +369,7 @@ Wow, that is a lot of errors in the output. It's a bit harder to find the issue 
 nano 0_scripts/DPYD_mini_pipeline.sh
 ```
 
-Uncomment the set -e on line 4 so it looks like below. This will makes the pipeline immediate exit once it hits an error: 
+Uncomment the set -e on line 4 so it looks like below. This will makes the pipeline immediately exit once it hits an error: 
 
 ```
 #!/bin/bash
@@ -402,7 +402,7 @@ Depending on the configuration of alleles, and whether those alleles have zero, 
 <summary>Answers</summary>
 <ul><li>1. Intermediate metaboliser </li>
 <li>2. Probably a minimum dosage or an alternative therapy </li> 
-<li>3. Basically, there are two SNPs in linkage disequilibirum, the tag SNP and the causal SNP. In rare cases, the linkage between them could break an therefore you have a tag SNP without the causal SNP, and vice versa.  </li> </ul>
+<li>3. Basically, there are two SNPs in linkage disequilibirum, the tag SNP and the causal SNP. We actually only test for the tag SNP as it is easier to sequence. In rare cases, the linkage between them could break and therefore you have a tag SNP without the causal SNP, and vice versa.  </li> </ul>
 </details>
 
 
