@@ -26,14 +26,14 @@ As usual we will be connecting the virtual machines:
 
 **Please [go here](../../Course_materials/vm_login_instructions.md) for instructions on connecting to your VM.**
 
-## 1.2 Learning Outcomes
+### 1.2 Learning Outcomes
 
 1. Understand clinical failure in a clinical bioinformatics and how to minimise it
 2. Learn troubleshooting errors from bioinformatic tools
 3. Learn about how clinical screening results are curated and reported out 
 4. Learn about variant reporting in the DPYD gene
 
-## 1.3 About the dataset
+### 1.3 About the dataset
 
 Today we are looking at four patients, who I have anonymised to Patient A, Patient B, Patient C and Patient D. There is a bonus Patient E who has not been reported out, and you will soon find out why. 
 
@@ -49,6 +49,7 @@ Let's load up our data and scripts!
 load software
 ```bash
 source activate bioinf
+pip install xlsxwriter
 ```
 
 create all directories and move into project directory
@@ -69,7 +70,7 @@ ln -s ~/data/failing_loudly/1_vcfs/counterpart_vcfs/*.vcf.gz* 1_vcfs/counterpart
 ln -s ~/data/failing_loudly/2_bam/*.bam* 2_bam/
 ln -s ~/data/failing_loudly/4_refs/Homo_sapiens_assembly38.fasta 4_refs/Homo_sapiens_assembly38.fasta
 ln -s ~/data/failing_loudly/4_refs/HaplotypeMap.vcf 4_refs/HaplotypeMap.vcf
-ln -s ~/data/failing_loudly/4_refs/DPYD_variants_genome_location.csv 4_refs/DPYD_variants_genome_location
+ln -s ~/data/failing_loudly/4_refs/DPYD_variants_genome_location.csv 4_refs/DPYD_variants_genome_location.csv
 ```
 
 ### 2.2 Checking a sample's integrity with genetic fingerprinting
@@ -162,7 +163,7 @@ Negative Value: The counterpart sample does not match the primary sample, indica
 Near Zero: Inconclusive result, usually due to low coverage or non-informative genotypes
 
 
-### 2.2 Checking all samples for integrity
+### 2.3 Checking all samples for integrity
 
 Let's now run this on all the samples with a simple for loop: 
 
@@ -335,7 +336,9 @@ bash ./DPYD_mini_pipeline.sh ../1_vcfs/Patient_A.vcf ../1_vcfs/Patient_B.vcf ../
 cd ..
 ```
 
-The output should be an excel file with some crisp formatting. You can see that we've coloured some of the cells green/red based on if they pass/fail some QC thresholds:
+The output should be an excel file with some crisp formatting. Click on it in the right-hand pane, click 'view file' to download it, then open it with excel on your desktop.
+
+ You can see that we've coloured some of the cells green/red based on if they pass/fail some QC thresholds:
 
 
 FILTER - must be "pass"
