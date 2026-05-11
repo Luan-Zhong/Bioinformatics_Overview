@@ -100,19 +100,20 @@ flowchart TD
 
 This is just one of many sanity checks we can do, including pedigree check relatedness between family members, population ancestry, etc.
 
-Let's start by running a fingerprint check for Patient A. The counterpart vcfs are in a separate folder, as you can see here, and have been produced completely indepedently from our diagnostic vcfs (so they won't have any variants in the DPYD gene). They contain mostly germline SNPs, that occur with faily high frequency (> 5%) in the most common population databases.
+Let's start by running a fingerprint check for Patient A. The counterpart vcfs are in a separate folder, and have been produced completely indepedently from our diagnostic vcfs (so they won't have any variants in the DPYD gene). They contain mostly germline SNPs, that occur with faily high frequency (> 5%) in the most common population databases.
 
 Here are the counterpart vcfs:
 
 ```bash
 ls 1_vcfs/counterpart_vcfs/
 ```
+```
 Patient_A_counterpart.gatk.hg38.vcf	
 Patient_B_counterpart.gatk.hg38.vcf
 Patient_C_counterpart.gatk.hg38.vcf	
 Patient_D_counterpart.gatk.hg38.vcf
 Patient_E_counterpart.gatk.hg38.vcf
-
+```
 
 We're going to check the concordance of genotypes using GATK. We need two input ref files for the fingerprint command: 
 
@@ -135,7 +136,7 @@ Tool returned:
 1
 ```
 
-Aha! An error! Lucky for us, we eat errors for breakfast. Notice, the GATK tool hasn't even said it's thrown an error - it's just listed all the required arguments (to nudge you to use the right ones) and told us at the bottom that we are doing something illegal. It's also told us the exit code is 1, which is "developer speak" for something is not right.
+Aha! An error! Lucky for us, we eat errors for breakfast. Notice, the GATK tool hasn't even said it's thrown an error - it's just listed all the required arguments (to nudge you to use the right ones) and told us that we are doing something illegal. It's also told us the exit code is 1, which is "developer speak" for something is not right.
 
 'Illegal argument value' tells us something might be wrong with our arguments or inputs. Can you figure out the issue now that you've had some experience digging into errors? Have a careful look at the inputs and give it a go. If you truly get stuck, the right command to run is hidden below. 
 
