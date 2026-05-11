@@ -220,7 +220,7 @@ Our previous error message told us to go to line 19, so let's quickly go there a
 18 if not vcf_file.lower().endswith(".vcf"):
 19        raise ValueError("Unknown Error number 2")
 
-Again, this is not very useful information. Press ESC, then "i", then use the arrows to go to line 19 and change "Unknown Error number 2" to something more useful. This time it's your turn to come up with a nice error message that tells us that the vcf extension is not right. Bear in mind when writing a good error message, best practice is to ensure it is providing as much information and context as possible pertaining to the issue, while still being concise and specific, and ideally something actionable. 
+Again, this is not very useful information. Use the arrows to go to line 19 and change "Unknown Error number 2" to something more useful. This time it's your turn to come up with a nice error message that tells us that the vcf extension is not right. Bear in mind when writing a good error message, best practice is to ensure it is providing as much information and context as possible pertaining to the issue, while still being concise and specific, and ideally something actionable. 
 
 
 When you're done, save your changes, exit nano, run the script again and enjoy a much better articulated error message:
