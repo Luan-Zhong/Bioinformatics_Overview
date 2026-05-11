@@ -238,7 +238,7 @@ This script classifies sample contamination status as "OK" if the number of low 
 
 <details>
 <summary>Answer</summary>
-<ul><li>1. No, again all of them except for again Patient E, which has 8 variants with low vaf. Perhaps something is up with that sample! </li>
+<ul><li>1. No, all of them passed except for again Patient E, which has 8 variants with low vaf. Perhaps something is up with that sample! </li>
  </ul>
 </details>
 
