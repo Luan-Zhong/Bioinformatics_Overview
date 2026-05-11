@@ -141,9 +141,11 @@ Aha! An error! Lucky for us, we eat errors for breakfast. Notice, the GATK tool 
 
 <details>
 <summary>Fixed_command</summary>
+
 ```bash
 gatk CheckFingerprint -R 4_refs/Homo_sapiens_assembly38.fasta -I 1_vcfs/Patient_A.vcf.gz --GENOTYPES 1_vcfs/counterpart_vcfs/Patient_A_counterpart.gatk.hg38.vcf.gz --HAPLOTYPE_MAP 4_refs/HaplotypeMap.vcf --GENOTYPE_LOD_THRESHOLD 0 --SUMMARY_OUTPUT 3_reports/1_fingerprint_check/Patient_A.fingerprint_summary.tsv --DETAIL_OUTPUT 3_reports/1_fingerprint_check/Patient_A.fingerprint_detailMetrics.tsv
 ```
+
 <details>
 
 
@@ -279,6 +281,7 @@ Do you think you can work it out and fix the typo in the above command? If you g
 
 <details>
 <summary>Fixed_command</summary>
+
 ```bash
 bcftools mpileup --count-orphans --no-BAQ \
   --max-depth 12345 --min-MQ 10 --skip-indels --annotate AD \
@@ -288,6 +291,7 @@ bcftools mpileup --count-orphans --no-BAQ \
 | bcftools call -c -a GQ | bcftools view -e 'GT="0/0"' \
 | bcftools +fill-tags -O v -o 3_reports/3_varcall_check/Patient_A_bcftools_check.vcf -- -t FORMAT/VAF
 ```
+
 <details>
 
 
