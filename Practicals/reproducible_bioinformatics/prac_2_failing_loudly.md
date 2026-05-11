@@ -71,12 +71,6 @@ ln -s ~/data/failing_loudly/4_refs/HaplotypeMap.vcf 4_refs/HaplotypeMap.vcf
 ln -s ~/data/failing_loudly/4_refs/DPYD_variants_genome_location.csv 4_refs/DPYD_variants_genome_location
 ```
 
-copy new scripts and data for this week's prac
-
-```bash
-ln -s ~/data/failing_loudly/1_vcfs/*.vcf 1_vcfs/
-```
-
 ### 2.2 Checking a sample's integrity with genetic fingerprinting
 
 The throughput of NGS samples going through clinical laboratories is really high, and getting higher every year. Some labs are seeing more than 20,000 NGS samples processed each year. With so many samples being manually handled at certain steps, how can we guarantee that no sample has been swapped or contaminated with another? 
@@ -147,10 +141,11 @@ Aha! An error! Lucky for us, we eat errors for breakfast. Notice, the GATK tool 
 
 <details>
 <summary>Fixed_command</summary>
-<ul>```bash
+```bash
 gatk CheckFingerprint -R 4_refs/Homo_sapiens_assembly38.fasta -I 1_vcfs/Patient_A.vcf.gz --GENOTYPES 1_vcfs/counterpart_vcfs/Patient_A_counterpart.gatk.hg38.vcf.gz --HAPLOTYPE_MAP 4_refs/HaplotypeMap.vcf --GENOTYPE_LOD_THRESHOLD 0 --SUMMARY_OUTPUT 3_reports/1_fingerprint_check/Patient_A.fingerprint_summary.tsv --DETAIL_OUTPUT 3_reports/1_fingerprint_check/Patient_A.fingerprint_detailMetrics.tsv
-``` </ul>
+```
 <details>
+
 
 Well done! If the command worked, you should see in your ouput Patient_A: LOD = 19.548716624813856. 
 
@@ -284,7 +279,7 @@ Do you think you can work it out and fix the typo in the above command? If you g
 
 <details>
 <summary>Fixed_command</summary>
-<ul>```bash
+```bash
 bcftools mpileup --count-orphans --no-BAQ \
   --max-depth 12345 --min-MQ 10 --skip-indels --annotate AD \
   -f ./4_refs/Homo_sapiens_assembly38.fasta \
@@ -292,7 +287,7 @@ bcftools mpileup --count-orphans --no-BAQ \
    ./2_bam/Patient_A.bam \
 | bcftools call -c -a GQ | bcftools view -e 'GT="0/0"' \
 | bcftools +fill-tags -O v -o 3_reports/3_varcall_check/Patient_A_bcftools_check.vcf -- -t FORMAT/VAF
-``` </ul>
+```
 <details>
 
 
@@ -398,7 +393,7 @@ Depending on the configuration of alleles, and whether those alleles have zero, 
 <details>
 <summary>Answers</summary>
 <ul><li>1. Intermediate metaboliser </li>
-<ul><li>2. Probably a minimum dosage or an alternative therapy </li> </ul>
+<ul><li>2. Probably a minimum dosage or an alternative therapy </li> 
 <ul><li>3. Basically, there are two SNPs in linkage disequilibirum, the tag SNP and the causal SNP. In rare cases, the linkage between them could break an therefore you have a tag SNP without the causal SNP, and vice versa.  </li> </ul>
 </details>
 
