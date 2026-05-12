@@ -47,8 +47,7 @@ Delivered in Semester 1
 - Practical 2 - [Failing loudly 2](Practicals/reproducible_bioinformatics/prac_2_failing_loudly.md)
 
 - Practical 3 - [Code comments](Practicals/reproducible_bioinformatics/prac_3_code_comments.md)
-- Practical 4 - [Failing loudly 2](Practicals/reproducible_bioinformatics/prac_4_github_advanced.md)
-
+- Practical 4 - [Hashes, diffs and versions](Practicals/reproducible_bioinformatics/prac_4_hashes_diffs_versions.md)
 
 ## Module 4: Version Control
 
