@@ -46,6 +46,16 @@ Delivered in Semester 1
 - Practical 1 - [Failing loudly 1](Practicals/reproducible_bioinformatics/prac_1_failing_loudly.md)
 - Practical 2 - [Failing loudly 2](Practicals/reproducible_bioinformatics/prac_2_failing_loudly.md)
 
+- Practical 3 - [Code comments](Practicals/reproducible_bioinformatics/prac_3_code_comments.md)
+- Practical 4 - [Failing loudly 2](Practicals/reproducible_bioinformatics/prac_4_github_advanced.md)
+
+
+## Module 4: Version Control
+
+- Practical 1 - [Git Intro](Practicals/version_control/prac_1_git_intro.md)
+- Practical 2 - [Git Advanced](Practicals/version_control/prac_2_git_advanced.md)
+- Practical 3 - [GitHub Intro](Practicals/version_control/prac_3_github_intro.md)
+- Practical 4 - [GitHub Advanced](Practicals/version_control/prac_4_github_advanced.md)
 
 ## Other Course Materials
 
