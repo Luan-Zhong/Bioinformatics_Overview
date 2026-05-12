@@ -1,0 +1,135 @@
+---
+title: "GitHub Advanced"
+author: "David Lawrence"
+date: "2025-10-29"
+output: html_document
+---
+
+## Sign Up to GitHub
+
+You can skip this if done in previous tutorial
+
+https://github.com - It's possible you may keep this GitHub account, use it for CVs etc. So I recommend NOT using a silly name or using your Adelaide uni account name
+
+## Practical - simulated open source repo
+
+There's a [GitHub repository Practical project](https://github.com/davmlaw/2025_practical_github_repositories) which is a simulation of an open source project with bugs.
+
+It has randomly generated data, so has the same structure (but different data) as [Assignment 6](https://university-of-adelaide-bx-masters.github.io/BIOTECH-7005-BIOINF-3000/Assignments/Assignment6.html)
+
+## File history
+
+From the project page, click on "data" then click on your student number .txt file. You can see the latest content, and the last commit.
+
+* Click "history" in the top right hand corner to see all the commits.
+* Go back and click "blame" to see commits that last touched a row
+
+## Branches
+
+Branches allow you to keep different versions of code (say, a "stable" vs "experimental/active development") and keep work separate.
+
+You can split off branches, and merge branches into each other.
+
+[Git - branches in a nutshell](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell)
+[GitHub - about branches](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-branches)
+
+* Click on the "branches" links on the practical repo
+
+## Raising an issue
+
+Raise an issue in the [GitHub repository Practical project](https://github.com/davmlaw/2025_practical_github_repositories) for the XXXXXXX bug
+
+Make sure the title includes your filename and what's wrong with it, ie "file data/a1059391.txt contains 'XXXXXXX'"
+
+Remember to be nice - perhaps start the issue with "Hi, thanks for your project! I think I may have found an issue" - be humble and kind. You may be adding more stress to an overworked person trying to do altruistic work...
+
+A bad issue raises stress but a good issue helps people, and makes it more easy for them to fix, and happier to do so.
+
+Write [Actual vs Expected](https://medium.com/we-are-testers/chapter-2-how-to-write-useful-actual-and-expected-results-details-in-your-bug-report-10b83e5aaa75) for your file, only mentioning the high severity bug (XXXXXXX)
+
+## Forking
+
+You generally don't have permission to modify other people's projects, so how do we modify it, or send them changes? Start by forking.
+
+Forking is a way to create a personal copy of someone else's repository on GitHub. When you fork a repo, you're essentially duplicating it under your GitHub account. This allows you to freely experiment with changes without affecting the original project.
+
+Steps for Forking on GitHub:
+
+    Navigate to the repository you want to fork.
+    Click the "Fork" button, usually located at the top right corner of the repo's page.
+    Choose where you want to fork the repo. Usually, it's your personal GitHub account.
+
+What Happens After Forking:
+
+    You get a new repository under your account that's identical to the original repo at the time of forking.
+    Your fork exists independently, meaning changes to the fork won't affect the original repo, and vice versa.
+
+Common Use Cases:
+
+    Contributing to a Project: Fork the repo, clone your fork locally, make changes, push back to your fork on GitHub, and then create a pull request to the original repo.
+    Personal Experiments: You can freely modify your fork without worrying about the original project.
+
+
+## Fork the repository to your personal account.
+
+* View the fork. Notice you have the code, but not your own copy of the issues etc
+
+## Clone your newly forked personal repo
+
+* Find the green "Code" button and click it
+* Copy the URL
+* On your VM
+
+
+```
+git clone https://github.com/YOUR_USERNAME/2025_practical_github_repositories
+cd 2025_practical_github_repositories
+```
+
+
+## Fix the XXXXXXX issue
+
+* Edit your data/ file, and remove the XXXXXXX issue ONLY (ie DO NOT change the UPPERCASE bug at the same time). There should only be 1 space between the words after removing the XXXXX
+* ```git add``` then ``git commit --message "fix issue #xxx"`` (referencing the issue in the original repo you raised)
+* ``git push`` back to your repo
+
+If this failed - it may be because you need to setup access tokens
+
+## Access Tokens
+
+You can skip this section if you completed the previous tutorial. 
+
+GitHub uses [Personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) rather than passwords. To generate one of these for the VM:
+
+* Click on your user icon in the top right
+* Click "Settings"
+* In bottom left menu option - "Developer Settings", then "Personal Access token"
+* Generate new token (classic), label it something like "bioinformatics VM". Make sure you click the first tickbox "repo" so you can use it to push/pull
+
+**DO NOT CLOSE THIS TAB** - leave it open so you can copy/paste it when you do a git push
+
+You can store your token (as plaintext on the VM) via:
+
+```
+git config --global credential.helper store
+git push # Enter username and tokens and enter
+```
+
+
+## Your forked repo
+
+Go to your forked repo page.
+
+* Notice your files last updates have changed
+* Notice it says "X commits ahead of the old repo"
+
+## Submit a pull request
+
+* Create a pull request from the front page of your repo (near "X commits ahead")
+* Comments should link to both issues and give a brief description of the change. You don't need to repeat everything in the issue, just link to it
+* after creating the pull request you'll be taken to the original repo (not your fork) - notice that the "pull request" tab now shows some numbers. Notice how the pull request comment can be hovered over to see the issue
+* Go to your issue - you should be able to see the linked pull request
+
+# Extras
+
+[GitHub extra reading](github_extra.md)

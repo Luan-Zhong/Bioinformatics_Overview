@@ -1,0 +1,664 @@
+---
+title: "Version Control - Git Advanced"
+author: "David Lawrence"
+date: "2025-10-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Outline
+
+* Creating a new repository
+* Add/Commit
+* Staging area
+* Second commmit
+* Git Commit message best practices
+* Tagging
+* Bash scripts + git
+* Git ignore
+* Moving through history
+* Restoring deleted files
+* Branches
+* Pull / Push
+* Bonus: Workflows
+* Bonus: R studio git integration
+* Bonus: GitHub preview
+
+## Git setup / config
+
+Skip this if you did it last prac
+
+Git tracks which user did what, so you need to identify yourself.
+
+Copy/paste this into the terminal, EDIT IT WITH YOUR ACTUAL INFO then run:
+
+```
+# You need to modify things below to your actual info!
+git config --global user.name "Your name"
+git config --global user.email "your.name@student.adelaide.edu.au"
+git config --global core.editor "nano -w"
+```
+
+This is stored in your home directory and so works on all git repositories (global)
+
+To see it:
+
+```
+cat ~/.gitconfig
+```
+
+## Creating a new repository
+
+```
+# Go to where you want to create new git repository
+mkdir bioinfo_tute_my_new_repo
+cd bioinfo_tute_my_new_repo # Go into this directory
+git init
+```
+
+This creates a new (empty) git repository in the current directory
+
+You can look for a hidden directory called ".git"
+
+```
+ls -a # This shows hidden files
+
+ls -R .git # Show all the files in .git folder (recursively)
+```
+
+## Add/Commit
+
+* Edit a file, eg "README.md"
+* Paste in:
+
+```
+Apples
+Watermelon
+```
+
+Then save the file, and exit to the shell. Run:
+
+```
+git status
+```
+
+This should show you that you have 1 untracked file called 'README.md'. 
+
+Git diff shows shows changes in your working directory that haven’t been staged yet. The difference between your files and the index.
+
+```
+git diff
+```
+
+We need to tell Git about this change - run:
+
+```
+git add README.md
+git status # Shows state of things
+```
+
+This has been added but not comitted. So git diff (working vs staged) should show nothing:
+
+```
+git diff
+```
+
+But as it hasn't been committed, this should show something (diff between staging and last commit):
+
+```
+git diff --staged
+```
+
+Commit it:
+
+```
+git commit
+```
+
+Because you didn't specify a message, this will open up your editor so you can enter it.
+
+Note: editor was chosen when you previously entered: ```git config --global core.editor "nano -w"``` (you don't need to re-run this)
+
+Enter something like "initial shopping list" then exit. It will apply a commit with the message you entered.
+
+## Staging area
+
+Why did we have to do add and then commit? Ie why have a staging area instead of comitting directly?
+
+![](https://openclipart.org/image/400px/332045)
+
+It allows you to carefully add/remove individual files to build a commit - ie you can change a lot of files, then commit a few together, then others in a separate commit.
+
+Think of it as a draft area where you can carefully build exactly what you want to commit.
+
+## Second commit
+
+Edit README.md again, adding 2 more lines:
+
+```
+Bananas
+Mango
+```
+
+Run
+
+```
+git commit
+```
+
+Again, it should say: "no changes added to commit" - because you haven't added the file (wasn't staged). Let's do that and commit:
+
+```
+git add README.md 
+git commit -m "add stuff"
+```
+
+We used the ```-m``` parameter to provide the commit message on the command line, so we didn't need to open up nano to type one.
+
+Run:
+
+```
+git log
+```
+
+You can see your comments will stored against a commit for all time - make sure you spend a bit of time making them clear and useful!
+
+## Git Commit message best practices
+
+* Explain the "why" (the commit is the "how")
+* 1st line is used as summary. Keep it short (under 50 chars). If you want to add more lines, use a blank line then go on with more details
+
+Perhaps we should make that last message better, to edit it:
+
+```
+git commit --amend -m "Add Cyan monkey's fruit"
+```
+
+## Tagging
+
+All commits have unique hashes as labels, however these don't mean anything and are hard to remember.
+
+You can give commits your own names, which is called tagging.
+
+```
+git tag my_tag <hash from git log>  # need to change to your hash
+```
+
+Now if you look at that commit in the log, it also has the tag
+
+```
+git log
+```
+
+Now, instead of remembering or copy/pasting hashes, you can use tags:
+
+```
+git show my_tag
+```
+
+
+A common use for tags is to label a release. This makes it easier to know the state of code in a release, find what releases are affected by bugs, and for instance show what changed between releases, eg:
+
+[CDot change diff](https://github.com/SACGF/cdot/compare/v0.2.7...v0.2.8)
+
+This is linked from the CHANGELOG file in one of my GitHub projects:
+
+https://github.com/SACGF/cdot/blob/main/CHANGELOG.md
+
+## Bash scripts + git
+
+Tip from scientific reproducibility lecture. If you always use Git, you can keep track of what version of a script was run.
+
+For instance, copy/paste this into a file pipeline.sh
+
+```
+touch pipeline.sh # Make empty file
+chmod a+x pipeline.sh # Make it executable
+```
+
+Then edit and add contents
+
+```
+#!/bin/bash
+
+DATA_DIR=data
+FASTA_FILE=${DATA_DIR}/dna.fasta
+TODAY=$(date --iso)
+# HEAD is latest commit - this retrieves that hash and stores it
+GIT_COMMIT=$(git rev-parse HEAD)
+RUN_LOG=pipeline_run_${TODAY}_${GIT_COMMIT}.log
+
+mkdir -p ${DATA_DIR}
+
+if [[ ! -e ${FASTA_FILE} ]]; then
+    echo ">DNA sequence, ~25% accuracy" > ${FASTA_FILE}
+    cat /dev/urandom | tr -dc 'GATC' | fold -w ${1:-50} | head -1 >> ${FASTA_FILE}
+fi
+
+echo "Script ${0} started $(date) in '$(pwd)'" > ${RUN_LOG}
+echo "git: ${GIT_COMMIT}" >> ${RUN_LOG}
+echo "Input: $(md5sum ${FASTA_FILE})" >> ${RUN_LOG}
+```
+
+Now add/commit it:
+
+```
+git add pipeline.sh 
+git commit -m "reproducible pipeline"
+```
+
+And run it, then examine the logs:
+
+```
+bash pipeline.sh
+cat *.log
+```
+
+This should have saved the output:
+
+```
+Script pipeline.sh started Fri 16 Sep 2022 01:16:32 ACST in '/home/dlawrence/localwork/bioinfo_tute_my_new_repo'
+git: 2af18ad1033bbd5efd90a0aa88acf59dc1d9c4c4
+Input: 482b49fe8627a6a300b51f46f7e5c6ff  data/dna.fasta
+```
+
+**Exercise**
+
+Modify this script to generate a longer DNA sequence with a different filename, then checking in the changes, then re-running it.
+
+## Git ignore
+
+Sometimes you deliberately don't want to track certain files.
+
+Examples include binary files, logs, temporary files or editor configuration (so each person can set their own preferences)
+
+Run 
+
+```
+git status
+```
+
+The log and data files are here. Let's say that in a real experiment they are enormous, and you don't want to check them in.
+
+```
+echo "data/" > .gitignore
+echo "*.log" >> .gitignore
+```
+
+Now run:
+
+```
+git status
+```
+
+You shouldn't see anything (as log files have been ignored)
+
+NOTE: Already tracked files aren't retroactively ignored
+
+Here is the .gitignore on the bioinfo project: https://github.com/University-of-Adelaide-Bx-Masters/BIOTECH-7005-BIOINF-3000/blob/master/.gitignore
+
+People have often build .gitignore for certain languages to hide what you don't need. Search for them: https://www.google.com/search?q=git+ignore+R+lang
+
+**Exercise**
+
+Check in .gitignore
+
+(optional) Write a 2000 word philosophy paper describing what you think should happen if you add .gitignore to the .gitignore file.
+
+## Moving through history
+
+Git stores (in .git) all of the changes ever applied to the files in the repo.
+
+It is worth thinking of the "normal files" in the directory as temporary - "working files", they can be reconstructed at various historical points by replaying certain git changes. Re-applying all of the changes will create the "latest" versions, and you can selectively apply patches to move through historical versions.
+
+![](https://openclipart.org/image/400px/332045)
+
+Cat the first log file from your pipeline.sh runs above, and find the commit hash
+
+To move the working files back to the state of this commit, you can run:
+
+```
+git checkout <commit_hash>  # Need to copy/paste from your git history
+```
+
+This will mention having a "detached head" - HEAD keeps track of the current point in a repository. Usually, it is attached to a branch (eg master), while moving through history, it's "detached". This is normal when viewing old commits, but commits made in that state are not attached to a branch
+
+You can also see this if you run 
+
+```
+git status
+```
+
+It will say "head detached"
+
+**Exercise**
+
+Run 
+
+```
+git log
+``` 
+
+and pick a commit, ie "initial commit"
+
+Move the repo back to this commit, and examine the README.md file
+
+To move back to the latest commit, run:
+
+```  
+git checkout master 
+```
+
+To check you're back to normal - run ```git log``` and ensure that the last commit has HEAD next to it
+
+
+## Branches - Overview
+
+So far in your new repository we've been working in a linear way.
+
+But remember Git is a graph, and you can have multiple paths (think back to the ```git log --graph``` diagrams above) that split apart.
+
+The default branch is master (for newer versions of git: "main"), but you can diverge from this, and also merge together different branches.
+
+There are 2 common conventions on how to structure branches in a repo:
+
+* Master is stable, new features / unstable development is done in branches, then merged back into master (BIOTECH-7005 repo is like this. There's only 1 class so master makes sense)
+* Master is latest (somewhat unstable), stable versions are their own branches (usually only used if you have releases, or deployments on different servers)
+
+## Branches - dev/feature branches
+
+A common task when working with multiple people is to create a branch from current HEAD to do new development, so you can store your code in the repository without breaking master
+
+To see branches:
+
+```
+# No argument means "view all"
+git branch
+```
+
+You can call a branch whatever you like. Some people use their name to make it clear its just for them.
+
+You can create a branch then switch to it:
+
+```
+git checkout master # Make sure you are on master before branching
+git branch blue_monkey_new_feature # Creates a new branch from HEAD
+git checkout blue_monkey_new_feature
+```
+
+Or you could do this in 1 line via:
+
+```
+# You would do this INSTEAD of the line above, doing it after will error and do nothing
+git checkout -b blue_monkey_new_feature
+```
+
+If you run this, you should be able to see 2 branches now
+
+```
+git branch
+```
+
+
+Now edit the README.md and add a line "* Grapes"
+
+```
+git add README.md
+git commit -m "Blue monkey new feature change - add Grapes"
+```
+
+You've now saved your work, and can share with others, but its not in "master" yet.
+
+Have a look at the commits here:
+
+```
+git log
+```
+
+Now, go back to the master branch.
+
+```
+git checkout master
+```
+
+Check the state of the branch:
+
+```
+git log # last change is not here
+```
+
+Check the state of the working files (remember, Git creates/modifies these to represent the state of the repo)
+
+```
+cat README.md  # Double check that grapes are not in master's working README.md file
+```
+
+Now, we want to move ALL of the changes from the feature branch back into master.
+
+```
+git merge blue_monkey_new_feature # Merge branch back into master
+```
+
+Because there were no conflicts - the merge was done automatically.
+
+But imagine that the blue and cyan monkeys went off and did separate work. Find the commit before the merge, and create a branch from that, eg:
+
+
+```
+ # HEAD = current. HEAD^ = 1 commit back, HEAD^^ = 2 commits back etc
+git checkout -b cyan_monkey_new_feature2 HEAD^  # 1 commit back
+```
+
+Edit the README.md, say add "* Caffeinated bananas" and delete "* Watermelon"
+
+Add/commit
+
+```
+git add README.md
+git commit -m "cyan monkey shopping list changes"
+```
+
+Then back to master, then merge:
+
+```
+git checkout master
+git merge cyan_monkey_new_feature2
+```
+
+This can't be auto-merged and is flagged as a conflict.
+
+```
+Auto-merging README.md
+CONFLICT (content): Merge conflict in README.md
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+If you look at the README.md it was merged, but with deliberate errors inserted around the merge conflict. This is to make it obvious that something went wrong, and to break any code so it doesn't execute (better to crash, than be wrong)
+
+You have to manually edit it, to pick what lines you want from the 2 changes:
+
+```
+* Apples
+* Bananas
+<<<<<<< HEAD
+* Grapes
+=======
+* Chocolate covered bananas
+>>>>>>> cyan_monkey_new_feature2
+* Mango
+```
+
+Edit this file, to put the entries in alphabetical order, then delete the lines with "<<<<" and ">>>" on them
+
+```
+git add README.md
+git commit # editor will now suggest a 'merge' commit message
+```
+
+Now run:
+
+```
+git log --graph
+```
+
+Notice the branch and how it was merged back
+
+## Commit size
+
+"Merge" brings in all of the commits from a branch, but sometimes you only want to take a few changes. For this, you can "cherry pick" individual commits into different branches.
+
+An example here is perhaps while working in a new area, you notice a bug. You fix the bug and want that also applied to master, but not all the rest of the work on the feature which isn't tested yet.
+
+Git works at the commit level, so if you want to apply some changes but not the other, they need to be in separate commits.
+
+This is why it's recommended you keep your commits small. If you are doing 2 separate conceptual changes, do them in separate commits. 
+
+## Cherry pick
+
+```
+git checkout master # Make sure you are back here
+git checkout -b my_new_branch
+```
+
+We'll create 2 commits in this branch, but only bring 1 back to master. The other we'll leave, to be merged back into master later
+
+Edit the README.md, and add another fruit, eg "* Oranges"
+
+Add/commit
+
+```
+git add README.md
+git commit -m "Add oranges to shopping list because we need to make juice for breakfast tomorrow"
+```
+
+Now edit README.md and add a different fruit, eg "* Lemons" 
+
+```
+git add README.md
+git commit -m "Add lemons for taco tuesday next week"
+```
+
+Check the status of things in the my_new_branch branch:
+
+```
+git log
+```
+
+Now go back to master:
+
+```
+git checkout master
+
+# Then confirm that changes have NOT been applied
+git log
+cat README.md
+```
+
+We a copy of the commit hash that we want to apply to master. We could have copied this from the branch before we went back to master, but git log can also be passed the branch name:
+
+```
+git log my_new_branch
+```
+
+```
+git rev-parse my_new_branch # This will be the lemon one (the latest)
+# These commands are similar - if you press "UP" in the shell, you can get to previous command, and add the "^" at the end quickly rather than copy/pasting
+git rev-parse my_new_branch^ # This will be the orange one (second to last)
+
+# You can also execute commands and store the output to a variable:
+ORANGE_COMMIT=$(git rev-parse my_new_branch^)
+git show $ORANGE_COMMIT # Hopefully shows the commit we are after
+```
+
+Now, we want to cherry pick just the orange (but not lemon) commit
+
+```
+git cherry-pick $ORANGE_COMMIT
+```
+
+Now, run the standard stuff to get your bearings:
+
+```
+# Then confirm that changes have NOT been applied
+git log
+cat README.md
+```
+
+
+## Pull / Push
+
+When you clone a repository (eg from GitHub) you make a local copy (with all commits and history)
+
+When you edit files and make make changes to this, you 
+
+and also track where you got it from (remote origin) - so it is easy to keep them in sync.
+
+**Fetch** - retrieves commits from another repo, but doesn't apply them
+**Pull** - runs fetch, then applies the commits, in effect "syncing" your local repo to the remote
+**Push** - send your changes to the remote server (we will cover this in either the bonus section below, and GitHub prac in Week 9)
+
+## Bonus: Workflows
+
+When working with others, you need to decide on how to use Git in your day to day work - these work patterns are often called [git workflows](https://www.atlassian.com/git/tutorials/comparing-workflows)
+
+For instance - is it ok to have broken code in master? If you are working by yourself, or are making very small changes you have tested well, it may be OK to commit directly into the master branch.
+
+If you are running an open source project and random people download your code - maybe not!
+
+If I am working on something larger than 1 day's work, I like to create a [feature branch](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow) so that I can push my code to Github (to have a backup + work on different computers) then merge back to master when done.
+
+Some teams only do work in feature branches, then use pull requests to review the code by someone else before it is merged into master
+
+## Bonus: R studio git integration
+
+Note: This may only work on the desktop version of R studio - haven't tested on web version.
+
+Many [IDEs](https://en.wikipedia.org/wiki/Integrated_development_environment) integrate with source control.
+
+In R studio, select via top menu: 
+
+* **file** -> **new project**
+* Select **Existing project**
+* Browse to the directory of the **BIOTECH-7005-BIOINF-3000** repository
+* Click **Create Project**
+
+There is now a git button in the toolbar (just below the top menu)
+
+
+**Question** 
+
+- Creating a new project caused a file "BIOTECH-7005-BIOINF-3000.Rproj" to appear in the repository. Why isn't this visible as an untracked file in the git panel?
+
+## Bonus: GitHub
+
+[Github](https://github.com) is a website that hosts git repositories on the internet, and also provides a number of services such as authentication, code browsing, issue tracking etc.
+
+* Sign up for a GitHub account if you don't have one
+* Login to the site
+
+GitHub uses "Personal access tokens" rather than passwords. To generate one of these for the VM:
+
+* Click on your user icon in the top right
+* Click "Settings"
+* In bottom left menu option - "Developer Settings", then "Personal Access token"
+* Generate new token, label it something like "bioinformatics VM", it needs repository access
+
+If you have password access to your VM, and you are happy to store your password in plain text on the VM, then you can do so via:
+
+```
+git config --global credential.helper store
+```
+
+Otherwise, just leave the tab open so you can copy/paste it, or copy/paste it into a temporary text editor
+
+* Create a new repository (eg "bioinfo_tute_my_new_repo")
+* Follow the instructions labelled **...or push an existing repository from the command line**
+
+When questioned for your password, paste in the personal access token (if you store credentials, it will save it now to your VM disk)
+
+* Explore your repository on the GitHub site!
+
+We will be going into GitHub in depth next week.
