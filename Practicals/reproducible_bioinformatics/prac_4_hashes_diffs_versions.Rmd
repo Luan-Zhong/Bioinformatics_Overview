@@ -302,7 +302,7 @@ How do we ensure R is loading the correct version?
 See [renv](https://rstudio.github.io/renv/articles/renv.html) which allows you to load specific versions of packages
 
 
-```{r}
+```{r eval=FALSE}
 install.packages("renv")
 ```
 
@@ -321,7 +321,7 @@ After 1.0 - the data remains grouped after summarization unless you explicitly u
 
 
 
-```{r}
+```{r eval=FALSE}
 renv::install("dplyr@0.8.5", prompt=FALSE)
 
 library(dplyr)
@@ -333,7 +333,7 @@ print(ddplyr_version)
 Now, install a newer version:
 
 
-```{r}
+```{r eval=FALSE}
 renv::install("dplyr@1.0.5", prompt=FALSE)
 
 library(dplyr)

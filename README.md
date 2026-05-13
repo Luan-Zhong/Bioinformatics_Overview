@@ -46,8 +46,8 @@ Delivered in Semester 1
 - Practical 1 - [Failing loudly 1](Practicals/reproducible_bioinformatics/prac_1_failing_loudly.md)
 - Practical 2 - [Failing loudly 2](Practicals/reproducible_bioinformatics/prac_2_failing_loudly.md)
 
-- Practical 3 - [Code comments](Practicals/reproducible_bioinformatics/prac_3_code_comments.html)
-- Practical 4 - [Hashes, diffs and versions](Practicals/reproducible_bioinformatics/prac_4_hashes_diffs_versions.html)
+- Practical 3 - [Code comments](https://university-of-adelaide-bx-masters.github.io/Bioinformatics_Overview/Practicals/reproducible_bioinformatics/prac_3_code_comments.html)
+- Practical 4 - [Hashes, diffs and versions](https://university-of-adelaide-bx-masters.github.io/Bioinformatics_Overview/Practicals/reproducible_bioinformatics/prac_4_hashes_diffs_versions.html)
 
 ## Module 4: Version Control
 
