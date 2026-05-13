@@ -1,9 +1,4 @@
----
-title: "GitHub Extra"
-author: "David Lawrence"
-date: "2025-10-29"
-output: html_document
----
+# GitHub Extra
 
 Some extra material on GitHub / Open source for students that finish early
 

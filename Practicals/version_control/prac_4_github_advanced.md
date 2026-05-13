@@ -1,9 +1,4 @@
----
-title: "GitHub Advanced"
-author: "David Lawrence"
-date: "2025-10-29"
-output: html_document
----
+# GitHub Advanced
 
 ## Sign Up to GitHub
 

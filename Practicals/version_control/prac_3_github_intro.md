@@ -1,9 +1,4 @@
----
-title: "GitHub Intro"
-author: "David Lawrence"
-date: "2025-10-27"
-output: html_document
----
+# GitHub Intro
 
 ## Quiz
 

@@ -26,7 +26,7 @@ For the rest of the tutorial, I am only going to talk about comments in standard
 
 In the R language, comments start with "#" and last until the end of the line.
 
-```
+```{r}
 # This is a comment in R!
 # Some programming languages have multi-line comments
 # but with R, you just keep making more single-line comments
@@ -48,7 +48,7 @@ Think - if you came back 6 months later with no memory of writing this - what wo
 
 Bad comments can be useless - if they add nothing to the code.
 
-```
+```{r}
 i = 1
 i = i + 1  # Add 1 to i
 ```
@@ -59,7 +59,7 @@ Maybe when you are just starting out it's ok to write notes for yourself, but as
 
 Comments can get out sync with the code. Comments can lie!
 
-```
+```{r}
 i = 1
 i = i + 2  # Add 1 to i
 ```
@@ -225,7 +225,7 @@ A lot of languages have a special feature when using an IDE (code editor) where 
 
 In R - you can only do this in packages, where you put comments like this above the functions:
 
-```
+```{r}
 #' Reverse complement a DNA sequence
 #'
 #' This function returns the reverse complement to the passed sequence

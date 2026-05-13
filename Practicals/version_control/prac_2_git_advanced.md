@@ -1,13 +1,4 @@
----
-title: "Version Control - Git Advanced"
-author: "David Lawrence"
-date: "2025-10-23"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+# Version Control - Git Advanced
 
 ## Outline
 
