@@ -89,7 +89,7 @@ cat ~/.gitconfig
 If you have already have the repo from a previous tutorial, you need to update it:
 
 ```
-cd BIOTECH-7005-BIOINF-3000 # Wherever you cloned it before
+cd Bioinformatics_Overview # Wherever you cloned it before
 git pull  # fetch changes from GitHub and update your local repository
 # If you get errors due to changes from the last tutorial, perhaps it is easier to just delete it and clone it again.
 ```
@@ -98,7 +98,7 @@ If you haven't cloned the repo before, do so via:
 
 ```
 # Clone a repo
-git clone https://github.com/University-of-Adelaide-Bx-Masters/BIOTECH-7005-BIOINF-3000
+git clone https://github.com/University-of-Adelaide-Bx-Masters/Bioinformatics_Overview
 # Go into the repo
 cd Bioinformatics_Overview
 ```
