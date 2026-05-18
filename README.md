@@ -6,6 +6,7 @@ Delivered in Semester 1
 ## Module 1: Fundamentals of Bioinformatics
 
 [VM login instructions](Course_materials/vm_login_instructions.md)
+[Site - GithubIO](https://university-of-adelaide-bx-masters.github.io/Bioinformatics_Overview/)
 
 **Introduction to BASH**
 
