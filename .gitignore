@@ -1,1 +1,27 @@
+# Editors / IDEs
 .idea/
+.vscode/
+*.swp
+*~
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# R / RStudio
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# Logs and temp files
+*.log
+*.tmp
