@@ -338,7 +338,7 @@ All files (under management in the repo) are as they were at that time.
 
 ```
 # You can copy this version of the file somewhere else
-cp README.md /tmp
+cp README.md ~/README_prac1.md
 ```
 
 If you run "git log" now - you can see that the final commit is not pointing to "master" anymore.
@@ -353,7 +353,7 @@ You now have 2 copies of the file - and can compare them
 
 ```
 # Normal diff, not git diff
-diff /tmp/README.md README.md
+diff ~/README_prac1.md README.md
 ```
 
 ## Restoring deleted files
@@ -409,7 +409,7 @@ Q: What would have happened if I deleted the .git directory?
 * Go and edit the README.md file and delete lines, add lines, just totally trash it
 * To see what you changed (can you remember?)
 
-```git diff``
+```git diff```
 
 * Imagine if you had to restore this by manually undoing those changes?
 * Revert all changes via:
