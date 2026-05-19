@@ -288,7 +288,7 @@ git status
 You shouldn't see anything (as log files have been ignored)
 
 NOTE: Already tracked files aren't retroactively ignored
-
+# FIXME: Need to update to Bioinformatics_Overview
 Here is the .gitignore on the bioinfo project: https://github.com/University-of-Adelaide-Bx-Masters/BIOTECH-7005-BIOINF-3000/blob/master/.gitignore
 
 People have often build .gitignore for certain languages to hide what you don't need. Search for them: https://www.google.com/search?q=git+ignore+R+lang
@@ -355,7 +355,7 @@ But remember Git is a graph, and you can have multiple paths (think back to the 
 The default branch is master (for newer versions of git: "main"), but you can diverge from this, and also merge together different branches.
 
 There are 2 common conventions on how to structure branches in a repo:
-
+# FIXME: Need to update to Bioinformatics_Overview
 * Master is stable, new features / unstable development is done in branches, then merged back into master (BIOTECH-7005 repo is like this. There's only 1 class so master makes sense)
 * Master is latest (somewhat unstable), stable versions are their own branches (usually only used if you have releases, or deployments on different servers)
 
@@ -588,7 +588,9 @@ When you edit files and make make changes to this, you
 and also track where you got it from (remote origin) - so it is easy to keep them in sync.
 
 **Fetch** - retrieves commits from another repo, but doesn't apply them
+
 **Pull** - runs fetch, then applies the commits, in effect "syncing" your local repo to the remote
+
 **Push** - send your changes to the remote server (we will cover this in either the bonus section below, and GitHub prac in Week 9)
 
 ## Bonus: Workflows
@@ -613,7 +615,7 @@ In R studio, select via top menu:
 
 * **file** -> **new project**
 * Select **Existing project**
-* Browse to the directory of the **BIOTECH-7005-BIOINF-3000** repository
+* Browse to the directory of the **Bioinformatics_Overview** repository
 * Click **Create Project**
 
 There is now a git button in the toolbar (just below the top menu)
@@ -621,7 +623,7 @@ There is now a git button in the toolbar (just below the top menu)
 
 **Question** 
 
-- Creating a new project caused a file "BIOTECH-7005-BIOINF-3000.Rproj" to appear in the repository. Why isn't this visible as an untracked file in the git panel?
+- Creating a new project caused a file "Bioinformatics_Overview.Rproj" to appear in the repository. Why isn't this visible as an untracked file in the git panel?
 
 ## Bonus: GitHub
 
@@ -634,7 +636,7 @@ GitHub uses "Personal access tokens" rather than passwords. To generate one of t
 
 * Click on your user icon in the top right
 * Click "Settings"
-* In bottom left menu option - "Developer Settings", then "Personal Access token"
+* In bottom left menu option - "Developer Settings", then "Personal Access token", then "Tokens (classic)"
 * Generate new token, label it something like "bioinformatics VM", it needs repository access
 
 If you have password access to your VM, and you are happy to store your password in plain text on the VM, then you can do so via:
